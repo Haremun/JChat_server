@@ -5,22 +5,20 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
 public class JsonClientService implements Runnable, ClientService {
-  private final DataOutputStream outToClient;
+  private final ConnectionService connectionService;
   private final OutputStream outputStream;
   private final ObjectMapper objectMapper;
   private final Socket socket;
-  private final ConnectionService connectionService;
+  private String userName;
 
   public JsonClientService(ConnectionService connectionService, Socket socket) throws IOException {
     this.socket = socket;
     this.connectionService = connectionService;
-    outToClient = new DataOutputStream(this.socket.getOutputStream());
     outputStream = socket.getOutputStream();
 
     JsonFactory jsonFactory = new JsonFactory();
@@ -32,26 +30,17 @@ public class JsonClientService implements Runnable, ClientService {
   @Override
   public void run() {
     try {
+      Message message = objectMapper.readValue(socket.getInputStream(), Message.class);
+      userName = message.getAuthor();
+      connectionService.processMsg(this, message);
       while (socket.isConnected()) {
-        Message message = objectMapper.readValue(socket.getInputStream(), Message.class);
+        message = objectMapper.readValue(socket.getInputStream(), Message.class);
         System.out.println("Received: " + message);
         connectionService.processMsg(this, message);
       }
     } catch (IOException e) {
-      System.out.println(e.getMessage());
+      connectionService.removeClientService(userName);
     }
-  }
-
-  @Override
-  public void sendMessage(String msg) {
-    new Thread(() -> {
-      try {
-        Message message = new Message.MessageBuilder().message(msg).build();
-        objectMapper.writeValue(outputStream, message);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }).start();
   }
 
   @Override

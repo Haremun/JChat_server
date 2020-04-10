@@ -29,12 +29,26 @@ class ConnectionService {
         }
         break;
       case 1:
-        usersCollection.addUser(new User(message.getAuthor()), clientService);
+        clientService.sendMessage(
+            new Message.MessageBuilder()
+                .messageType(2)
+                .message(usersCollection.getAllUsers())
+                .build()
+        );
         usersCollection.executeForEach((k, v) -> v.sendMessage(message));
+        usersCollection.addUser(new User(message.getAuthor()), clientService);
         break;
     }
   }
-  void removeClientService(ClientService clientService){
 
+  void removeClientService(String userName) {
+    usersCollection.removeUser(new User(userName));
+    usersCollection.executeForEach(
+        (k, v) -> v.sendMessage(
+            new Message.MessageBuilder()
+                .messageType(3)
+                .message(userName)
+                .build())
+    );
   }
 }
