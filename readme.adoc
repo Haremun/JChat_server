@@ -1,10 +1,15 @@
-Title: JChat_server
-Author: Kamil Bieganski
-Version: 0.1
+= JChat_server
+
+_Author: Kamil Biegański_
 
 To run project you have to use:
-- bash or other compatible unix shell
-- jdk version openjdk 11.0.6 2020-01-14
-- maven version 
 
-To build project simply run "mvn package" command, to make it work run "java -cp target/JChat_server-0.1.jar com.bieganski.JChat_server"
+- jdk version 11+
+- maven version 3.6.2+
+
+=== Building
+    mvn package
+
+=== Running application
+
+    java -jar target/jchat_client-?.?.jar
