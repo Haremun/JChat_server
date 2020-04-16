@@ -18,14 +18,16 @@
     <maven.compiler.target>${project.java.version}</maven.compiler.target>
     <maven.compiler.encoding>${project.build.sourceEncoding}</maven.compiler.encoding>
     <maven.resources.encoding>${project.build.sourceEncoding}</maven.resources.encoding>
+    <version.plugin.maven.enforcer>3.0.0-M3</version.plugin.maven.enforcer>
     <version.maven>3.6.2</version.maven>
+    <version.testng>7.1.0</version.testng>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.1.0</version>
+      <version>${version.testng}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -42,7 +44,6 @@
  </dependencies>
 
   <build>
-    <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -64,6 +65,19 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.2</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       	<plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
@@ -76,7 +90,6 @@
           </configuration>
         </plugin>
       </plugins>
-    </pluginManagement>
   </build>
 </project>
 
